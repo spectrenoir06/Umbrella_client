@@ -24,6 +24,7 @@ public class TcpServer
 	public void send(String str)
 	{
 		try {
+			System.out.println(str);
 			serverIn.writeBytes(str + "\n");
 		} catch (IOException e)
 		{
@@ -33,8 +34,11 @@ public class TcpServer
 	
 	public String receive()
 	{
+		String str;
 		try {
-			return (serverOut.readLine() + "\n");
+			str = serverOut.readLine() + "\n";
+			System.out.println(str);
+			return (str);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return("");

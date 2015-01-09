@@ -4,12 +4,14 @@ public class Client {
 	private	int		port;
 	private	String	hostname;
 	private	String	login;
+	private String	consol;
 	
 	public Client(String ip, int port)
 	{
 		super();
 		this.ip = ip;
 		this.port = port;
+		this.consol = "";
 	}
 
 	public String getIp() {
@@ -42,5 +44,19 @@ public class Client {
 
 	public void setLogin(String login) {
 		this.login = login;
+	}
+
+	public String getConsol() {
+		return consol;
+	}
+
+	public void setConsol(String consol) {
+		this.consol = consol;
+	}
+
+	@Override
+	public String toString() {
+		return "Client [ip=" + ip + ", port=" + port + ", hostname=" + hostname
+				+ ", login=" + login + "]";
 	}
 }

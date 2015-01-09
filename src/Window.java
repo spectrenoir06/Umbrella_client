@@ -4,26 +4,39 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+
 import javax.swing.JScrollPane;
-import java.awt.FlowLayout;
-import javax.swing.JTextPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
-import javax.swing.border.BevelBorder;
+import javax.swing.JTextArea;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Window {
 
 	private JFrame frame;
-	private JTextField txtLsla;
+	private JTextField cmdText;
+	private String text;
+	private static Server server;
+	private static JTextArea display;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					Window window = new Window();
@@ -33,6 +46,29 @@ public class Window {
 				}
 			}
 		});
+	server = new Server("localhost", 1234);
+	while(true)
+	{
+		Window.update();
+	}
+}
+
+	private static void update()
+	{
+		server.update();
+		updateConsol();
+		//text = server.getClients().get(0).getConsol();
+	}
+
+	private static void updateConsol() {
+		try
+		{
+			display.setText(server.getClients().get(0).getConsol());
+		}
+		catch (Exception e)
+		{
+			
+		}
 	}
 
 	/**
@@ -40,6 +76,7 @@ public class Window {
 	 */
 	public Window() {
 		initialize();
+		//setServer(new Server("localhost", 1234));
 	}
 
 	/**
@@ -51,48 +88,122 @@ public class Window {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout(0, 0));
 		
-		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(null, "Client", TitledBorder.CENTER, TitledBorder.TOP, null, null));
-		frame.getContentPane().add(panel, BorderLayout.WEST);
-		panel.setLayout(new GridLayout(0, 1, 0, 0));
+		text = "";
+		JPanel InfoPanel = new JPanel();
+		frame.getContentPane().add(InfoPanel, BorderLayout.NORTH);
+		
+		JLabel clientNb = new JLabel("Umbrela Manager");
+		clientNb.setFont(new Font("Dialog", Font.BOLD, 15));
+		clientNb.setHorizontalAlignment(SwingConstants.CENTER);
+		InfoPanel.add(clientNb);
+		
+		
+		
+		JScrollPane clientsScrollPane = new JScrollPane();
+		clientsScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		clientsScrollPane.setBorder(new TitledBorder(null, "Client", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		frame.getContentPane().add(clientsScrollPane, BorderLayout.WEST);
+		
+		
+		
+		JPanel clientPanel = new JPanel();
+		clientsScrollPane.setViewportView(clientPanel);
+		clientPanel.setLayout(new GridLayout(0, 1, 0, 5));
 		
 		JClient client = new JClient();
-		client.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel.add(client);
+		clientPanel.add(client);
 		
 		JClient client_1 = new JClient();
-		client_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel.add(client_1);
+		clientPanel.add(client_1);
 		
 		JClient client_2 = new JClient();
-		client_2.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel.add(client_2);
+		clientPanel.add(client_2);
 		
 		JClient client_3 = new JClient();
-		client_3.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		panel.add(client_3);
+		clientPanel.add(client_3);
 		
-		JPanel panel_1 = new JPanel();
-		frame.getContentPane().add(panel_1, BorderLayout.CENTER);
-		panel_1.setLayout(new BorderLayout(0, 0));
+		JClient client_4 = new JClient();
+		clientPanel.add(client_4);
 		
-		JTextPane txtpnSpectrenoirAt = new JTextPane();
-		txtpnSpectrenoirAt.setText("# spectrenoir at Spectrenoir-PC in ~/eclipse/workspace/Umbrella_Client on git:master x [3:55:35]\n$ ls -la /\ntotal 116\ndrwxr-xr-x  26 root root  4096 janv.  7 03:16 .\ndrwxr-xr-x  26 root root  4096 janv.  7 03:16 ..\ndrwxr-xr-x   2 root root  4096 déc.  11 22:08 bin\ndrwxr-xr-x   4 root root  4096 déc.  28 00:55 boot\ndrwxrwxr-x   2 root root  4096 mai    3  2014 cdrom\ndrwxr-xr-x  16 root root  4240 janv.  7 03:28 dev\ndrwxr-xr-x 151 root root 12288 janv.  7 03:21 etc\ndrwxr-xr-x   3 root root  4096 mai    3  2014 home\nlrwxrwxrwx   1 root root    33 déc.  28 00:54 initrd.img -> boot/initrd.img-3.13.0-43-generic\nlrwxrwxrwx   1 root root    33 déc.  10 00:32 initrd.img.old -> boot/initrd.img-3.13.0-40-generic\ndrwxr-xr-x  27 root root  4096 déc.   9 21:42 lib\ndrwxr-xr-x   2 root root  4096 déc.   9 21:42 lib32\ndrwxr-xr-x   2 root root  4096 déc.   9 21:42 lib64\ndrwx------   2 root root 16384 mai    3  2014 lost+found\ndrwxr-xr-x   4 root root  4096 juin   9  2014 media\ndrwxr-xr-x   2 root root  4096 avril 11  2014 mnt\ndrwxr-xr-x   4 root root  4096 déc.  20 11:27 opt\ndr-xr-xr-x 217 root root     0 janv.  7 04:21 proc\ndrwxr-xr-x   2 root root  4096 oct.   4 00:07 $RECYCLE.BIN\ndrwx------  15 root root  4096 juil.  7  2014 root\ndrwxr-xr-x  29 root root   960 janv.  9 00:48 run\ndrwxr-xr-x   2 root root 12288 déc.  11 22:08 sbin\ndrwxr-xr-x   3 root root  4096 juil. 11 21:28 srv\ndr-xr-xr-x  13 root root     0 janv.  7 04:21 sys\ndrwxr-xr-x   2 root root  4096 août  28 17:02 System Volume Information\ndrwxrwxrwt  24 root root  4096 janv.  9 03:17 tmp\ndrwxr-xr-x  12 root root  4096 août  24 16:53 usr\ndrwxr-xr-x  13 root root  4096 avril 16  2014 var\nlrwxrwxrwx   1 root root    30 déc.  28 00:54 vmlinuz -> boot/vmlinuz-3.13.0-43-generic\nlrwxrwxrwx   1 root root    30 déc.  10 00:32 vmlinuz.old -> boot/vmlinuz-3.13.0-40-generic\n\n# spectrenoir at Spectrenoir-PC in ~/eclipse/workspace/Umbrella_Client on git:master x [3:55:39]\n$");
-		panel_1.add(txtpnSpectrenoirAt);
+		JClient client_5 = new JClient();
+		clientPanel.add(client_5);
 		
-		JPanel panel_2 = new JPanel();
-		panel_1.add(panel_2, BorderLayout.SOUTH);
-		panel_2.setLayout(new BorderLayout(0, 0));
+		JClient client_6 = new JClient();
+		clientPanel.add(client_6);
 		
-		txtLsla = new JTextField();
-		txtLsla.setText("ls -la /");
-		panel_2.add(txtLsla, BorderLayout.CENTER);
-		txtLsla.setColumns(10);
+		
+		
+		
+		JPanel consolPanel = new JPanel();
+		frame.getContentPane().add(consolPanel);
+		consolPanel.setLayout(new BorderLayout(0, 0));
+		
+		display = new JTextArea(0, 0);
+		display.setWrapStyleWord(true);
+		display.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		display.setLineWrap(true);
+		display.setTabSize(2);
+		display.setText(text);
+		display.setEditable(false); // set textArea non-editable
+		JScrollPane scroll = new JScrollPane(display);
+		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		consolPanel.add(scroll, BorderLayout.CENTER);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		
+		JPanel cmdPanel = new JPanel();
+		consolPanel.add(cmdPanel, BorderLayout.SOUTH);
+		cmdPanel.setLayout(new BorderLayout(0, 0));
 		
 		JButton btnNewButton = new JButton("Enter");
-		panel_2.add(btnNewButton, BorderLayout.EAST);
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println(arg0);
+				server.getClients().get(0).setConsol(server.getClients().get(0).getConsol() + "==> " + cmdText.getText() + "\n");
+				server.cmd(cmdText.getText(), server.getClients().get(0));
+				cmdText.setText("");
+			}
+		});
+		cmdPanel.add(btnNewButton, BorderLayout.EAST);
 		
+		cmdText = new JTextField();
+		cmdText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == 10)
+				{
+					server.getClients().get(0).setConsol(server.getClients().get(0).getConsol() + "==> " + cmdText.getText() + "\n");
+					server.cmd(cmdText.getText(), server.getClients().get(0));
+					cmdText.setText("");
+				}
+			}
+		});
+		cmdText.setText("ls -la");
+		cmdPanel.add(cmdText, BorderLayout.CENTER);
+		cmdText.setColumns(10);
 		
 	}
 
+	public JTextField getCmdText() {
+		return cmdText;
+	}
+
+	public void setCmdText(JTextField cmdText) {
+		this.cmdText = cmdText;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public static Server getServer() {
+		return server;
+	}
+
+	public void setServer(Server server) {
+		this.server = server;
+	}
 }
