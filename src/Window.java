@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 public class Window {
 
@@ -30,40 +31,49 @@ public class Window {
 	private String text;
 	private static Server server;
 	private static JTextArea display;
-
+	private	ArrayList<JClient> clients;
+	JClient currentClient;
+	JPanel clientPanel;
+	
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Window window = new Window();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+	public static void main(String[] args)
+	{
+		Window	window = new Window();
+		window.frame.setVisible(true);
+	
 	server = new Server("localhost", 1234);
+	
+	window.initClients();
+	
 	while(true)
 	{
-		Window.update();
+		window.update();
 	}
 }
 
-	private static void update()
+	private void initClients() {
+		clients = new ArrayList<JClient>();
+		for (Client	c : server.getClients())
+		{
+			System.out.println("salut " + c);
+			clients.add(new JClient(c, this));
+		}
+		for (JClient jc : clients)
+			clientPanel.add(jc);
+	}
+
+	public void update()
 	{
 		server.update();
 		updateConsol();
-		//text = server.getClients().get(0).getConsol();
 	}
 
-	private static void updateConsol() {
+	private void updateConsol() {
 		try
 		{
-			display.setText(server.getClients().get(0).getConsol());
+			display.setText(currentClient.getClient().getConsol());
 		}
 		catch (Exception e)
 		{
@@ -97,42 +107,16 @@ public class Window {
 		clientNb.setHorizontalAlignment(SwingConstants.CENTER);
 		InfoPanel.add(clientNb);
 		
-		
-		
 		JScrollPane clientsScrollPane = new JScrollPane();
 		clientsScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		clientsScrollPane.setBorder(new TitledBorder(null, "Client", TitledBorder.CENTER, TitledBorder.TOP, null, null));
+		
 		frame.getContentPane().add(clientsScrollPane, BorderLayout.WEST);
 		
-		
-		
-		JPanel clientPanel = new JPanel();
+		clientPanel = new JPanel();
 		clientsScrollPane.setViewportView(clientPanel);
-		clientPanel.setLayout(new GridLayout(0, 1, 0, 5));
-		
-		JClient client = new JClient();
-		clientPanel.add(client);
-		
-		JClient client_1 = new JClient();
-		clientPanel.add(client_1);
-		
-		JClient client_2 = new JClient();
-		clientPanel.add(client_2);
-		
-		JClient client_3 = new JClient();
-		clientPanel.add(client_3);
-		
-		JClient client_4 = new JClient();
-		clientPanel.add(client_4);
-		
-		JClient client_5 = new JClient();
-		clientPanel.add(client_5);
-		
-		JClient client_6 = new JClient();
-		clientPanel.add(client_6);
-		
-		
-		
+
+		clientPanel.setLayout(new GridLayout(0, 1, 0, 0));
 		
 		JPanel consolPanel = new JPanel();
 		frame.getContentPane().add(consolPanel);
@@ -199,11 +183,16 @@ public class Window {
 		this.text = text;
 	}
 
-	public static Server getServer() {
+	public Server getServer() {
 		return server;
 	}
 
 	public void setServer(Server server) {
 		this.server = server;
+	}
+
+	public void setCurrentClient(JClient jClient) {
+		currentClient = jClient;
+		display.setText(currentClient.getClient().getConsol());
 	}
 }

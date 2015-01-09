@@ -9,12 +9,22 @@ public class Server {
 	
 	
 	public Server(String ip, int port) {
+		String	data;
 		try
 		{
 			server = new TcpServer(ip, port);
 			server.send("cmd:root");	
 			sendUpdateClientList();
 			clients = new ArrayList<Client>();
+			while (true)
+			{
+				data = server.receive();
+				if (data.startsWith("jso:lst:"))
+				{
+					initClients(data.substring(8));
+					break;
+				}
+			}
 		}
 		catch (Exception e)
 		{
@@ -41,7 +51,7 @@ public class Server {
 		server.send("cmd:client");
 	}
 	
-	public void update()
+	public int update()
 	{
 		String	data;
 		
@@ -49,9 +59,7 @@ public class Server {
 		System.out.print(data);
 		if (data.startsWith("jso:"))
 		{
-			if (data.startsWith("jso:lst:"))
-				initClients(data.substring(8));
-			else if ((data.startsWith("jso:dat:")))
+			if ((data.startsWith("jso:dat:")))
 			{
 				JSONObject json = new JSONObject(data.substring(8));
 				
@@ -68,6 +76,7 @@ public class Server {
 					{
 						c.setConsol(c.getConsol() + json.getString("data") + "\n");
 						//System.out.println("client trouver cmd = " + c.getConsol());
+						return (0);
 					}
 				}
 			
@@ -77,6 +86,7 @@ public class Server {
 		{
 			//System.out.print(data);
 		}
+		return 0;
 	}
 	private void disconnectClient(String substring)
 	{
