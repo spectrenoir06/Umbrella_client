@@ -7,24 +7,45 @@ public class TcpServer
 	private DataOutputStream serverIn;
 	private BufferedReader serverOut;
 	
-	public TcpServer(String ip, int port) throws Exception
+	public TcpServer(String ip, int port)
 	{
-		socket		= new Socket(ip, port);
-		serverOut	= new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		serverIn	= new DataOutputStream(socket.getOutputStream());
+		try
+		{
+			socket		= new Socket(ip, port);
+			serverIn	= new DataOutputStream(socket.getOutputStream());
+			serverOut	= new BufferedReader(new InputStreamReader(socket.getInputStream()));	
+		}
+		catch (Exception e)
+		{
+			System.out.println("Impossible d'initialiser la connection");
+		}
 	}
 
-	public void send(String str) throws IOException
+	public void send(String str)
 	{
-		serverIn.writeBytes(str + "\n");
+		try {
+			serverIn.writeBytes(str + "\n");
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 	
-	public String receive() throws IOException
+	public String receive()
 	{
-		return (serverOut.readLine() + "\n");
+		try {
+			return (serverOut.readLine() + "\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return("");
+		}
 	}
-	public void finalize() throws IOException
+	public void finalize()
 	{
-		 socket.close();
+		 try {
+			socket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

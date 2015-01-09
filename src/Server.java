@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -21,17 +20,17 @@ public class Server {
 		}		
 	}
 	
-	private void cmd(String string) throws IOException
+	private void cmd(String string)
 	{
 		server.send("cmd:" + string);	
 	}
 
-	private void sendUpdateClientList() throws IOException
+	private void sendUpdateClientList()
 	{
 		server.send("cmd:client");
 	}
 	
-	public void update() throws IOException
+	public void update()
 	{
 		String	data;
 		
@@ -60,6 +59,8 @@ public class Server {
 		JSONObject json = new JSONObject(string);
 		Iterator<String> keys = json.keys();
 
+		System.out.println("InitClient");
+		
         while (keys.hasNext())
         {
             JSONObject tmp = (JSONObject) json.get(keys.next());
